@@ -9,35 +9,36 @@ import (
 
 type logger struct {
 	*zap.SugaredLogger
+	wrapped     *zap.SugaredLogger
 	enableTrace bool
 }
 
 func (l *logger) Trace(msg string) {
 	if l.enableTrace {
-		l.SugaredLogger.Debug(msg)
+		l.wrapped.Debug(msg)
 	}
 }
 
 func (l *logger) Tracef(format string, args ...interface{}) {
 	if l.enableTrace {
-		l.SugaredLogger.Debugf(format, args...)
+		l.wrapped.Debugf(format, args...)
 	}
 }
 
 func (l *logger) Debug(msg string) {
-	l.SugaredLogger.Debug(msg)
+	l.wrapped.Debug(msg)
 }
 
 func (l *logger) Info(msg string) {
-	l.SugaredLogger.Info(msg)
+	l.wrapped.Info(msg)
 }
 
 func (l *logger) Warn(msg string) {
-	l.SugaredLogger.Warn(msg)
+	l.wrapped.Warn(msg)
 }
 
 func (l *logger) Error(msg string) {
-	l.SugaredLogger.Error(msg)
+	l.wrapped.Error(msg)
 }
 
 // ZapFactory is a logger factory backended by zap logger.
@@ -54,12 +55,11 @@ func (f *ZapFactory) NewLogger(scope string) logging.LeveledLogger {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
+	named := f.BaseLogger.Named(scope)
 	l := &logger{
-		SugaredLogger: f.BaseLogger.
-			WithOptions(zap.AddCallerSkip(1)).
-			Named(scope).
-			Sugar(),
-		enableTrace: f.EnableTrace,
+		SugaredLogger: named.Sugar(),
+		wrapped:       named.WithOptions(zap.AddCallerSkip(1)).Sugar(),
+		enableTrace:   f.EnableTrace,
 	}
 	f.loggers = append(f.loggers, l)
 	return l
