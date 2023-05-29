@@ -1,6 +1,6 @@
 module github.com/pion/zapion
 
-go 1.13
+go 1.16
 
 require (
 	github.com/pion/logging v0.2.2
