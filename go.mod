@@ -4,5 +4,5 @@ go 1.16
 
 require (
 	github.com/pion/logging v0.2.2
-	go.uber.org/zap v1.24.0
+	go.uber.org/zap v1.25.0
 )
