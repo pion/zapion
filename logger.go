@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 The Pion community <https://pion.ly>
+// SPDX-License-Identifier: MIT
+
+// Package zapion is the backended pion logger using zap logger.
 package zapion
 
 import (
@@ -19,7 +23,7 @@ func (l *logger) Trace(msg string) {
 	}
 }
 
-func (l *logger) Tracef(format string, args ...interface{}) {
+func (l *logger) Tracef(format string, args ...any) {
 	if l.enableTrace {
 		l.wrapped.Debugf(format, args...)
 	}
@@ -62,6 +66,7 @@ func (f *ZapFactory) NewLogger(scope string) logging.LeveledLogger {
 		enableTrace:   f.EnableTrace,
 	}
 	f.loggers = append(f.loggers, l)
+
 	return l
 }
 
